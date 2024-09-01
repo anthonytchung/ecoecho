@@ -45,8 +45,9 @@ class SimilarityFinder:
             if item[6] is not None:
                 db_features = np.frombuffer(item[6], dtype=np.float32).reshape(1, -1)
                 if db_features.shape[1] == uploaded_features.shape[1]:
-                    similarity_score = float(cosine_similarity(uploaded_features, db_features).reshape(1,))
-                    print(similarity_score)
+                    similarity_array = cosine_similarity(uploaded_features, db_features)
+                    similarity_score = float(similarity_array[0, 0])
+                    # print(similarity_score)
                     similarities.append({
                         "id": item[0],
                         "title": item[1],
