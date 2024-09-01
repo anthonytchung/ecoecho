@@ -86,7 +86,6 @@ p {font-size: 1rem;}
     p {font-size: 1rem;}
 }
 
-<<<<<<< HEAD
 
 @layer base {
   :root {
@@ -153,6 +152,3 @@ p {font-size: 1rem;}
     @apply bg-background text-foreground;
   }
 }
-
-=======
->>>>>>> ae6ca4ff1f4bbd1361d21a0bfbc08bff96c37ef4
