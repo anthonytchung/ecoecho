@@ -9,3 +9,4 @@ Scrapy==2.11.2
 tensorflow==2.17.0
 tensorflow-hub==0.16.1
 Werkzeug==3.0.4
+pillow==10.4.0

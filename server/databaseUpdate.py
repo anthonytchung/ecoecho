@@ -63,7 +63,7 @@ class FeatureUpdater:
                 print(f"Error processing item {item_id}: {e}")
 
 def main():
-    clothes_db = "./clothing_scraper/clothes.db"
+    clothes_db = "./clothing_scraper/scraped_data/clothes.db"
     updater = FeatureUpdater(clothes_db)
     updater.update_features()
 

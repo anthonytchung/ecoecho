@@ -60,7 +60,7 @@ class SimilarityFinder:
                 else:
                     print(f"Feature dimension mismatch for item {item[0]}: DB features {db_features.shape[1]}, uploaded {uploaded_features.shape[1]}")
         similarities.sort(key=lambda x: x['similarity'], reverse=True)
-        return similarities[:3]
+        return similarities
 
 class ImageSimilarityApp:
     def __init__(self, upload_folder: str, database_path: str):
@@ -99,7 +99,7 @@ class ImageSimilarityApp:
 
 def main():
     UPLOAD_FOLDER = 'uploads'
-    DATABASE_PATH = "./clothing_scraper/clothes.db"
+    DATABASE_PATH = "./clothing_scraper/scraped_data/clothes.db"
     app = ImageSimilarityApp(UPLOAD_FOLDER, DATABASE_PATH)
     app.run()
 

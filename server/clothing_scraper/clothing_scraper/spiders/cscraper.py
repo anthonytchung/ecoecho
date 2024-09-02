@@ -6,9 +6,8 @@ class HMSpider(scrapy.Spider):
     name = 'hm_clothing'
     allowed_domains = ['hm.com']
     start_urls = ['https://www2.hm.com/en_us/men/sale/view-all.html']
-    # custom_settings = {
-    #     "CLOSESPIDER_ITEMCOUNT": "200",
-    # }
+    
+    count = 0
 
     def parse(self, response):
         # Extract product details from each product card
@@ -16,8 +15,10 @@ class HMSpider(scrapy.Spider):
         
         for product in response.css('article.f0cf84'):
             item = ClothingItem()
+            item['id'] = self.count
             item['title'] = product.css('h2.a04ae4::text').get().strip()
-            item['price'] = product.css('span.b19650::text').get().replace('$ ', '').strip()
+            item['sale_price'] = product.css('span.aa21e8::text').get().replace('$ ', '').strip()
+            item['original_price'] = product.css('span.b19650::text').get().replace('$ ', '').strip()
             srcset = product.css('img::attr(srcset)').get()
             if srcset:
                 # Split the string by comma to separate different resolutions
@@ -27,13 +28,14 @@ class HMSpider(scrapy.Spider):
                 item['image_url'] = highest_resolution_image
             item['product_url'] = product.css('a.db7c79').attrib['href']
             
+            self.count += 1
             yield item
         
         # Handle pagination if it's applicable
         page = 2
         # nextPageButton = response.css('button.f05bd4.aaa2a2.ab0e07::text').get()
         # print(nextPageButton)
-        while page < 10:
+        while page < 13:
             next_page = response.urljoin("?page=" + str(page))
             yield scrapy.Request(next_page, callback=self.parse)
             page += 1
