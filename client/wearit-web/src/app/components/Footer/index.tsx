@@ -3,7 +3,7 @@ export default function Footer (){
         <footer className=" w-full py-2">
             <div className="flex max-lg:flex-col items-center justify-between gap-3">
                     
-                <ul className="flex flex-wrap justify-center gap-x-6 gap-4">
+                <ul className="flex flex-wrap justify-center gap-x-5 gap-4">
                    
                     <li><a href="https://www.github.com/anthonytchung/">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" className="inline w-7 h-7">

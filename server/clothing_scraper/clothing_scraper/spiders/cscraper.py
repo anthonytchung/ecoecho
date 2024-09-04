@@ -5,7 +5,10 @@ from clothing_scraper.items import ClothingItem
 class HMSpider(scrapy.Spider):
     name = 'hm_clothing'
     allowed_domains = ['hm.com']
-    start_urls = ['https://www2.hm.com/en_us/men/sale/view-all.html']
+    start_urls = ['https://www2.hm.com/en_us/women/sale/view-all.html', 
+                  'https://www2.hm.com/en_us/men/sale/view-all.html', ]
+                #   'https://www2.hm.com/en_us/women/products/view-all.html', 
+                #   'https://www2.hm.com/en_us/men/products/view-all.html']
     
     count = 0
 
@@ -17,7 +20,7 @@ class HMSpider(scrapy.Spider):
             item = ClothingItem()
             item['id'] = self.count
             item['title'] = product.css('h2.a04ae4::text').get().strip()
-            item['sale_price'] = product.css('span.aa21e8::text').get().replace('$ ', '').strip()
+            item['price'] = product.css('span.aa21e8::text').get().replace('$ ', '').strip()
             item['original_price'] = product.css('span.b19650::text').get().replace('$ ', '').strip()
             srcset = product.css('img::attr(srcset)').get()
             if srcset:

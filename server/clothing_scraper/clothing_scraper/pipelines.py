@@ -19,7 +19,7 @@ class ClothingScraperPipeline:
         CREATE TABLE IF NOT EXISTS clothes(
             id INTEGER PRIMARY KEY,
             title TEXT,
-            sale_price REAL,
+            price REAL,
             original_price REAL,
             image_url TEXT,
             product_url TEXT,
@@ -46,11 +46,11 @@ class ClothingScraperPipeline:
         try:
             # Insert item into the database
             self.cur.execute("""
-            INSERT INTO clothes (id, title, sale_price, original_price, image_url, product_url) VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO clothes (id, title, price, original_price, image_url, product_url) VALUES (?, ?, ?, ?, ?, ?)
             """, (
                 adapter.get('id'),
                 adapter.get('title'),
-                adapter.get('sale_price'),
+                adapter.get('price'),
                 adapter.get('original_price'),
                 adapter.get('image_url'),
                 adapter.get('product_url')

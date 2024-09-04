@@ -5,10 +5,11 @@ from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import numpy as np
 from PIL import Image
-from tensorflow.keras.preprocessing import image
-from keras.applications.vgg16 import VGG16
+from tensorflow.keras.preprocessing.image import img_to_array
+from tensorflow.keras.applications.vgg16 import preprocess_input, VGG16
 from sklearn.metrics.pairwise import cosine_similarity
 import sqlite3
+from rembg import remove
 
 class FeatureExtractor:
     def __init__(self):
@@ -16,10 +17,23 @@ class FeatureExtractor:
                            pooling='max', input_shape=(224, 224, 3))
     
     def extract_features(self, image_path: str) -> np.ndarray:
-        input_image = Image.open(image_path)
-        resized_image = input_image.resize((224, 224))
-        image_array = np.expand_dims(image.img_to_array(resized_image), axis=0)
-        return self.model.predict(image_array)
+        try:
+            input_image = Image.open(image_path)
+            resized_image = input_image.resize((224, 224))
+            image_array = np.expand_dims(img_to_array(resized_image), axis=0)
+            features = self.model.predict(image_array)
+            return features
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            input_image = Image.open(image_path)
+            removed_bg = remove(input_image)
+            resized_image = removed_bg.resize((224, 224)).convert('RGB')
+            image_array = np.expand_dims(img_to_array(resized_image), axis=0)
+            image_array = preprocess_input(image_array)
+            features = self.model.predict(image_array)
+            return features
+            
+            # return  # Return an empty array in case of error
 
 class DatabaseManager:
     def __init__(self, database_path: str):
@@ -31,7 +45,7 @@ class DatabaseManager:
     def fetch_items(self) -> List[tuple]:
         with self.get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT id, title, sale_price, original_price, image_url, product_url, features FROM clothes")
+            cursor.execute("SELECT id, title, price, original_price, image_url, product_url, features FROM clothes")
             return cursor.fetchall()
 
 class SimilarityFinder:
@@ -51,7 +65,7 @@ class SimilarityFinder:
                     similarities.append({
                         "id": item[0],
                         "title": item[1],
-                        "sale_price": item[2],
+                        "price": item[2],
                         "original_price": item[3],
                         "image_url": item[4],
                         "product_url": item[5],

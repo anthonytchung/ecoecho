@@ -9,10 +9,10 @@ interface ResultsDisplayProps {
 export default function ResultsDisplay({ results }: ResultsDisplayProps) {
   const [displayCount, setDisplayCount] = useState(3)
 
-  // useEffect(() => {
-  //   // Reset display count whenever the imageInputId changes
-  //   setDisplayCount(3);
-  // }, );
+  useEffect(() => {
+    // Reset display count whenever the imageInputId changes
+    setDisplayCount(3);
+  }, results);
 
   const loadMore = () =>{
     setDisplayCount(displayCount + 3)
@@ -41,7 +41,7 @@ export default function ResultsDisplay({ results }: ResultsDisplayProps) {
             </div>
             <div className="p-4 flex justify-between flex-col h-32">
               <h3 className="font-bold text-xl mb-2 text-white group-hover:text-yellow-400 transition-colors duration-300 line-clamp-2">{product.title}</h3>
-              <p className="text-lg font-semibold items-center text-red-400  flex justify-between">${product.sale_price} 
+              <p className="text-lg font-semibold items-center text-red-400  flex justify-between">${product.price} 
                 {/* <span className="linze-through text-gray-200">${product.original_price} </span> */}
                 <span className="text-green-200 text-sm">{(product.similarity*100).toFixed(2)}% Similar</span>
               </p>
@@ -51,14 +51,15 @@ export default function ResultsDisplay({ results }: ResultsDisplayProps) {
             </div>
           </a>
         ))}
-        <button 
+        
+      </div>
+      <button 
           type="submit" 
           onClick={loadMore}
-          className="w-full px-4 py-3 font-bold text-white bg-gradient-to-r from-purple-500 to-indigo-600 rounded-lg hover:from-purple-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-opacity-50 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+          className="w-6/12 mx-auto mt-6 px-4 py-3 font-bold text-white bg-gradient-to-r from-purple-500 to-indigo-600 rounded-lg hover:from-purple-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-opacity-50 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed justify-center flex items-center"
         >
           Load More
         </button> 
-      </div>
     </div>
   )
 }

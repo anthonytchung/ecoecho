@@ -36,13 +36,13 @@ class DatabaseManager:
     def fetch_items(self) -> list:
         with self.get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT id, image_url FROM clothes")
+            cursor.execute("SELECT id, image_url FROM clothes WHERE features IS NULL")
             return cursor.fetchall()
     
     def update_item_features(self, item_id: int, features: bytes):
         with self.get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("UPDATE clothes SET features = ? WHERE id = ?", (features, item_id))
+            cursor.execute("UPDATE clothes SET features = ? WHERE id = ? AND features IS NULL", (features, item_id))
             conn.commit()
 
 class FeatureUpdater:

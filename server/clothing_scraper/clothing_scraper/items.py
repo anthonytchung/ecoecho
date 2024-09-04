@@ -8,7 +8,7 @@ import scrapy
 class ClothingItem(scrapy.Item):
     id = scrapy.Field()
     title = scrapy.Field()
-    sale_price = scrapy.Field()
+    price = scrapy.Field()
     original_price = scrapy.Field()
     image_url = scrapy.Field()
     product_url = scrapy.Field()
