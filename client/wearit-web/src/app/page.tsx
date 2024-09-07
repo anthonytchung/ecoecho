@@ -16,8 +16,8 @@ export default function WearItApp() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-400 to-gray-900">
       <Head>
-        <title>WearIt - Find Affordable Fashion Alternatives</title>
-        <meta name="description" content="Upload an image to find affordable alternatives to your favorite fashion items" />
+        <title>WearIt</title>
+        <meta name="description" content="Upload an image to find alternatives to your favorite fashion items" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -27,7 +27,7 @@ export default function WearItApp() {
             Wear<span className="text-green-400">It</span>
           </h1>
           <p className="text-xl sm:text-2xl text-gray-200 text-center mb-12 font-light">
-            Discover affordable alternatives to your favorite fashion items.
+            Discover alternatives to your favorite fashion items.
           </p>
 
           <div className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-md rounded-3xl shadow-2xl p-8 mb-12">
