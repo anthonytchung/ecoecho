@@ -1,6 +1,7 @@
 import { ResultItem } from '../../../types'
 import {useState, useEffect } from 'react'
 import { ExternalLink } from 'lucide-react'
+import { formatCost } from "@/lib/utils"
 
 interface ResultsDisplayProps {
   results: ResultItem[];
@@ -17,6 +18,11 @@ export default function ResultsDisplay({ results }: ResultsDisplayProps) {
   const loadMore = () =>{
     setDisplayCount(displayCount + 3)
   }
+
+  const back = () =>{
+    if (displayCount > 3) {
+      setDisplayCount(displayCount - 3)
+  }}
 
 
   return (
@@ -41,7 +47,7 @@ export default function ResultsDisplay({ results }: ResultsDisplayProps) {
             </div>
             <div className="p-4 flex justify-between flex-col h-32">
               <h3 className="font-bold text-xl mb-2 text-white group-hover:text-yellow-400 transition-colors duration-300 line-clamp-2">{product.title}</h3>
-              <p className="text-lg font-semibold items-center text-red-400  flex justify-between">${product.price} 
+              <p className="text-lg font-semibold items-center text-red-200  flex justify-between">{formatCost(product.price)} 
                 {/* <span className="linze-through text-gray-200">${product.original_price} </span> */}
                 <span className="text-green-200 text-sm">{(product.similarity*100).toFixed(2)}% Similar</span>
               </p>
@@ -53,13 +59,23 @@ export default function ResultsDisplay({ results }: ResultsDisplayProps) {
         ))}
         
       </div>
-      <button 
+      <div className="flex gap-3 w-6/12 mx-auto mt-6 ">
+        <button
+          type="submit" 
+          onClick={back}
+          className="w-6/12 mx-auto px-4 py-3 font-bold text-white bg-black rounded-lg hover:from-purple-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-opacity-50 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed justify-center flex items-center"
+        >
+          Back
+        </button>
+        <button 
           type="submit" 
           onClick={loadMore}
-          className="w-6/12 mx-auto mt-6 px-4 py-3 font-bold text-white bg-gradient-to-r from-purple-500 to-indigo-600 rounded-lg hover:from-purple-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-opacity-50 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed justify-center flex items-center"
+          className="w-6/12 mx-auto px-4 py-3 font-bold text-white bg-black rounded-lg hover:from-purple-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-opacity-50 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed justify-center flex items-center"
         >
           Load More
         </button> 
+      </div>
+      
     </div>
   )
 }

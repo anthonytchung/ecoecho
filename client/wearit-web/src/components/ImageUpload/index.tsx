@@ -1,6 +1,6 @@
 import { useState, ChangeEvent, FormEvent } from 'react'
 import { ResultItem } from '../../../types'
-import api from '../../app/api/upload'
+import api from '@/api/upload'
 import { Upload, Loader2 } from 'lucide-react'
 
 interface ImageUploadProps {

@@ -1,9 +1,9 @@
 "use client"
 import React, { useState } from 'react';
 import Head from 'next/head';
-import ImageUpload from '../components/ImageUpload';
-import ResultsDisplay from '../components/ResultsDisplay';
-import Footer from '../components/Footer';
+import ImageUpload from '@/components/ImageUpload';
+import ResultsDisplay from '@/components/ResultsDisplay';
+import Footer from '@/components/Footer';
 import { ResultItem } from '../../types';
 
 export default function WearItApp() {
