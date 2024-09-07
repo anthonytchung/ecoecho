@@ -2,6 +2,7 @@ import { useState, ChangeEvent, FormEvent } from 'react'
 import { ResultItem } from '../../../types'
 import api from '@/api/upload'
 import { Upload, Loader2 } from 'lucide-react'
+import { Button } from '@/components/ui/button';
 
 interface ImageUploadProps {
   onUploadSuccess: (results: ResultItem[]) => void;
@@ -44,6 +45,7 @@ export default function ImageUpload({ onUploadSuccess }: ImageUploadProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="flex items-center justify-center w-full">
+        {/* <span className="text-gray-500 dark:text-gray-400"><Button>Upload</Button></span> */}
         <label htmlFor="image-upload" className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 overflow-hidden">
           <div className="flex flex-col items-center justify-center pt-5 pb-6 w-full h-full">
             {previewUrl ? (

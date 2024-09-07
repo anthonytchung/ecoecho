@@ -1,5 +1,4 @@
 import os
-from typing import List, Dict, Any
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
@@ -10,6 +9,7 @@ from tensorflow.keras.applications.vgg16 import preprocess_input, VGG16
 from sklearn.metrics.pairwise import cosine_similarity
 import sqlite3
 from rembg import remove
+from typing import List, Dict, Any
 
 class FeatureExtractor:
     def __init__(self):
