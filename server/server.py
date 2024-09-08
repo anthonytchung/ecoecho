@@ -7,9 +7,10 @@ from PIL import Image
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.applications.vgg16 import preprocess_input, VGG16
 from sklearn.metrics.pairwise import cosine_similarity
-import sqlite3
+from pocketbase import PocketBase
 from rembg import remove
 from typing import List, Dict, Any
+import base64
 
 class FeatureExtractor:
     def __init__(self):
@@ -36,55 +37,64 @@ class FeatureExtractor:
             # return  # Return an empty array in case of error
 
 class DatabaseManager:
-    def __init__(self, database_path: str):
-        self.database_path = database_path
-    
-    def get_connection(self) -> sqlite3.Connection:
-        return sqlite3.connect(self.database_path)
+    def __init__(self, pb_url: str, collection_name: str):
+        self.pb = PocketBase(pb_url)
+        self.collection_name = collection_name
+        admin_data = self.pb.admins.auth_with_password('antkjc@gmail.com', 'adminpassword')
     
     def fetch_items(self) -> List[tuple]:
-        with self.get_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT id, title, price, original_price, image_url, product_url, features FROM clothes")
-            return cursor.fetchall()
+        records = self.pb.collection(self.collection_name).get_full_list()
+        items = []
+        for record in records:
+            items.append({
+                "id": record.id,
+                "title": record.title,
+                "price": record.price,
+                "original_price": record.original_price,
+                "image_url": record.image_url,
+                "product_url": record.product_url,
+                "features": record.features
+            })
+        return items
 
 class SimilarityFinder:
-    def __init__(self, database_path: str):
-        self.db_manager = DatabaseManager(database_path)
+    def __init__(self, pb_url: str, collection_name: str):
+        self.db_manager = DatabaseManager(pb_url, collection_name)
     
     def find_similar_items(self, uploaded_features: np.ndarray) -> List[Dict[str, Any]]:
         items = self.db_manager.fetch_items()
         similarities = []
         for item in items:
-            if item[6] is not None:
-                db_features = np.frombuffer(item[6], dtype=np.float32).reshape(1, -1)
+            if item["features"] is not None:
+                features_bytes = base64.b64decode(item["features"])
+                db_features = np.frombuffer(features_bytes, dtype=np.float32).reshape(1, -1)
                 if db_features.shape[1] == uploaded_features.shape[1]:
                     similarity_array = cosine_similarity(uploaded_features, db_features)
                     similarity_score = float(similarity_array[0, 0])
-                    # print(similarity_score)
                     similarities.append({
-                        "id": item[0],
-                        "title": item[1],
-                        "price": item[2],
-                        "original_price": item[3],
-                        "image_url": item[4],
-                        "product_url": item[5],
+                        "id": item["id"],
+                        "title": item["title"],
+                        "price": item["price"],
+                        "original_price": item["original_price"],
+                        "image_url": item["image_url"],
+                        "product_url": item["product_url"],
                         "similarity": similarity_score
                     })
                 else:
-                    print(f"Feature dimension mismatch for item {item[0]}: DB features {db_features.shape[1]}, uploaded {uploaded_features.shape[1]}")
+                    print(f"Feature dimension mismatch for item {item['id']}: DB features {db_features.shape[1]}, uploaded {uploaded_features.shape[1]}")
         similarities.sort(key=lambda x: x['similarity'], reverse=True)
         return similarities
 
+
 class ImageSimilarityApp:
-    def __init__(self, upload_folder: str, database_path: str):
+    def __init__(self, upload_folder: str, pb_url: str, collection_name: str):
         self.app = Flask(__name__)
         CORS(self.app)
         self.app.config['UPLOAD_FOLDER'] = upload_folder
         os.makedirs(self.app.config['UPLOAD_FOLDER'], exist_ok=True)
         
         self.feature_extractor = FeatureExtractor()
-        self.similarity_finder = SimilarityFinder(database_path)
+        self.similarity_finder = SimilarityFinder(pb_url, collection_name)
         
         self.setup_routes()
     
@@ -107,14 +117,15 @@ class ImageSimilarityApp:
                 results = self.similarity_finder.find_similar_items(uploaded_features)
 
                 return jsonify({'similarMatches': results})
-    
     def run(self, debug: bool = True, port: int = 8080):
         self.app.run(debug=debug, port=port)
 
+
 def main():
     UPLOAD_FOLDER = 'uploads'
-    DATABASE_PATH = "./clothing_scraper/scraped_data/clothes.db"
-    app = ImageSimilarityApp(UPLOAD_FOLDER, DATABASE_PATH)
+    POCKETBASE_URL = 'http://127.0.0.1:8090'
+    COLLECTION_NAME = 'clothes'
+    app = ImageSimilarityApp(UPLOAD_FOLDER, POCKETBASE_URL, COLLECTION_NAME)
     app.run()
 
 if __name__ == "__main__":

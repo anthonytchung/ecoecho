@@ -1,6 +1,6 @@
 import { useState, ChangeEvent, FormEvent } from 'react'
 import { ResultItem } from '../../../types'
-import api from '@/api/upload'
+import axios from 'axios'
 import { Upload, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button';
 
@@ -30,8 +30,8 @@ export default function ImageUpload({ onUploadSuccess }: ImageUploadProps) {
       const formData = new FormData()
       formData.append('file', selectedImage)
 
-      const response = await api.post('http://localhost:8080/api/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+      const response = await axios.post('http://localhost:8080/api/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
       })
 
       onUploadSuccess(response.data.similarMatches)

@@ -6,6 +6,8 @@ from io import BytesIO
 from tensorflow.keras.preprocessing import image
 from keras.applications.vgg16 import VGG16
 from typing import Tuple
+from pocketbase import PocketBase
+import base64
 
 class FeatureExtractor:
     def __init__(self):
@@ -27,45 +29,42 @@ class ImageDownloader:
         return "temp.jpg"
 
 class DatabaseManager:
-    def __init__(self, database_path: str):
-        self.database_path = database_path
-    
-    def get_connection(self) -> sqlite3.Connection:
-        return sqlite3.connect(self.database_path)
+    def __init__(self, pb_url: str, collection_name: str):
+        self.pb = PocketBase(pb_url)
+        admin_data = self.pb.admins.auth_with_password('antkjc@gmail.com', 'adminpassword')
+        self.collection_name = collection_name
     
     def fetch_items(self) -> list:
-        with self.get_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT id, image_url FROM clothes WHERE features IS NULL")
-            return cursor.fetchall()
+        items = []
+        records = self.pb.collection(self.collection_name).get_full_list()
+        for record in records:
+            items.append((record.id, record.image_url))
+        return items
     
-    def update_item_features(self, item_id: int, features: bytes):
-        with self.get_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute("UPDATE clothes SET features = ? WHERE id = ? AND features IS NULL", (features, item_id))
-            conn.commit()
+    def update_item_features(self, item_id: str, features: str):
+        features_bytes = features.tobytes()
+        features_base64 = base64.b64encode(features_bytes).decode('utf-8')
+        # print(item_id, features_base64)
+        self.pb.collection(self.collection_name).update(item_id, {
+            'features': features_base64,
+        })
 
 class FeatureUpdater:
-    def __init__(self, database_path: str):
-        self.db_manager = DatabaseManager(database_path)
+    def __init__(self, pb_url: str, collection_name: str):
+        self.db_manager = DatabaseManager(pb_url, collection_name)
         self.feature_extractor = FeatureExtractor()
-        self.image_downloader = ImageDownloader()
     
     def update_features(self):
         items = self.db_manager.fetch_items()
         for item_id, image_url in items:
-            try:
-                image_path = self.image_downloader.download_image(image_url)
-                features = self.feature_extractor.extract_features(image_path)
-                features_blob = features.tobytes()
-                self.db_manager.update_item_features(item_id, features_blob)
-            except Exception as e:
-                print(f"Error processing item {item_id}: {e}")
+            # print(item_id, image_url)
+            image_path = ImageDownloader.download_image(image_url)
+            features = self.feature_extractor.extract_features(image_path)
+            self.db_manager.update_item_features(item_id, features)
 
-def main():
-    clothes_db = "./clothing_scraper/scraped_data/clothes.db"
-    updater = FeatureUpdater(clothes_db)
-    updater.update_features()
-
+# Example usage
 if __name__ == "__main__":
-    main()
+    PB_URL = 'http://127.0.0.1:8090'  # URL where PocketBase is running
+    COLLECTION_NAME = 'clothes'
+    feature_updater = FeatureUpdater(PB_URL, COLLECTION_NAME)
+    feature_updater.update_features()

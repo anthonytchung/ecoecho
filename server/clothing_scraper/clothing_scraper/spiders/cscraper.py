@@ -38,7 +38,7 @@ class HMSpider(scrapy.Spider):
         page = 2
         # nextPageButton = response.css('button.f05bd4.aaa2a2.ab0e07::text').get()
         # print(nextPageButton)
-        while page < 13:
+        while page < 20:
             next_page = response.urljoin("?page=" + str(page))
             yield scrapy.Request(next_page, callback=self.parse)
             page += 1
