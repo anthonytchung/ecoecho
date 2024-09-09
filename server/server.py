@@ -1,67 +1,20 @@
 import os
+import base64
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import numpy as np
 from PIL import Image
-from tensorflow.keras.preprocessing.image import img_to_array
-from tensorflow.keras.applications.vgg16 import preprocess_input, VGG16
 from sklearn.metrics.pairwise import cosine_similarity
-from pocketbase import PocketBase
-from rembg import remove
 from typing import List, Dict, Any
-import base64
+from databaseUpdate import FeatureExtractor, DatabaseManager
 
-class FeatureExtractor:
-    def __init__(self):
-        self.model = VGG16(weights='imagenet', include_top=False, 
-                           pooling='max', input_shape=(224, 224, 3))
-    
-    def extract_features(self, image_path: str) -> np.ndarray:
-        try:
-            input_image = Image.open(image_path)
-            resized_image = input_image.resize((224, 224))
-            image_array = np.expand_dims(img_to_array(resized_image), axis=0)
-            features = self.model.predict(image_array)
-            return features
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            input_image = Image.open(image_path)
-            removed_bg = remove(input_image)
-            resized_image = removed_bg.resize((224, 224)).convert('RGB')
-            image_array = np.expand_dims(img_to_array(resized_image), axis=0)
-            image_array = preprocess_input(image_array)
-            features = self.model.predict(image_array)
-            return features
-            
-            # return  # Return an empty array in case of error
-
-class DatabaseManager:
-    def __init__(self, pb_url: str, collection_name: str):
-        self.pb = PocketBase(pb_url)
-        self.collection_name = collection_name
-        admin_data = self.pb.admins.auth_with_password('antkjc@gmail.com', 'adminpassword')
-    
-    def fetch_items(self) -> List[tuple]:
-        records = self.pb.collection(self.collection_name).get_full_list()
-        items = []
-        for record in records:
-            items.append({
-                "id": record.id,
-                "title": record.title,
-                "price": record.price,
-                "original_price": record.original_price,
-                "image_url": record.image_url,
-                "product_url": record.product_url,
-                "features": record.features
-            })
-        return items
 
 class SimilarityFinder:
     def __init__(self, pb_url: str, collection_name: str):
         self.db_manager = DatabaseManager(pb_url, collection_name)
     
-    def find_similar_items(self, uploaded_features: np.ndarray) -> List[Dict[str, Any]]:
+    def find_similar_items(self, uploaded_features: np.ndarray) -> list[dict[str, any]]:
         items = self.db_manager.fetch_items()
         similarities = []
         for item in items:
@@ -75,7 +28,6 @@ class SimilarityFinder:
                         "id": item["id"],
                         "title": item["title"],
                         "price": item["price"],
-                        "original_price": item["original_price"],
                         "image_url": item["image_url"],
                         "product_url": item["product_url"],
                         "similarity": similarity_score
@@ -123,7 +75,7 @@ class ImageSimilarityApp:
 
 def main():
     UPLOAD_FOLDER = 'uploads'
-    POCKETBASE_URL = 'http://127.0.0.1:8090'
+    POCKETBASE_URL = 'http://ec2-3-128-254-179.us-east-2.compute.amazonaws.com:8090'
     COLLECTION_NAME = 'clothes'
     app = ImageSimilarityApp(UPLOAD_FOLDER, POCKETBASE_URL, COLLECTION_NAME)
     app.run()

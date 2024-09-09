@@ -1,13 +1,14 @@
-import sqlite3
 import numpy as np
-from PIL import Image
 import requests
-from io import BytesIO
-from tensorflow.keras.preprocessing import image
-from keras.applications.vgg16 import VGG16
-from typing import Tuple
-from pocketbase import PocketBase
 import base64
+import asyncio, aiohttp
+import time, logging
+from PIL import Image
+from io import BytesIO
+from tensorflow.keras.preprocessing.image import img_to_array
+from tensorflow.keras.applications.vgg16 import preprocess_input, VGG16
+from rembg import remove
+from pocketbase import PocketBase
 
 class FeatureExtractor:
     def __init__(self):
@@ -15,18 +16,22 @@ class FeatureExtractor:
                            pooling='max', input_shape=(224, 224, 3))
         
     def extract_features(self, image_path: str) -> np.ndarray:
-        input_image = Image.open(image_path)
-        resized_image = input_image.resize((224, 224))
-        image_array = np.expand_dims(image.img_to_array(resized_image), axis=0)
-        return self.model.predict(image_array)
-
-class ImageDownloader:
-    @staticmethod
-    def download_image(image_url: str) -> str:
-        response = requests.get(image_url)
-        img = Image.open(BytesIO(response.content))
-        img.save("temp.jpg")
-        return "temp.jpg"
+        try:
+            input_image = Image.open(image_path)
+            resized_image = input_image.resize((224, 224))
+            image_array = np.expand_dims(img_to_array(resized_image), axis=0)
+            features = self.model.predict(image_array)
+            return features
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            input_image = Image.open(image_path)
+            removed_bg = remove(input_image)
+            resized_image = removed_bg.resize((224, 224)).convert('RGB')
+            image_array = np.expand_dims(img_to_array(resized_image), axis=0)
+            image_array = preprocess_input(image_array)
+            features = self.model.predict(image_array)
+            return features
+    
 
 class DatabaseManager:
     def __init__(self, pb_url: str, collection_name: str):
@@ -34,17 +39,31 @@ class DatabaseManager:
         admin_data = self.pb.admins.auth_with_password('antkjc@gmail.com', 'adminpassword')
         self.collection_name = collection_name
     
+    @staticmethod
+    async def download_image(session, image_url: str) -> str:
+        async with session.get(image_url) as response:
+            img = Image.open(BytesIO(await response.read()))
+            img.save("temp.jpg")
+            return "temp.jpg"
+        
+    
     def fetch_items(self) -> list:
         items = []
         records = self.pb.collection(self.collection_name).get_full_list()
         for record in records:
-            items.append((record.id, record.image_url))
+            items.append({
+                "id": record.id,
+                "title": record.title,
+                "price": record.price,
+                "image_url": record.image_url,
+                "product_url": record.product_url,
+                "features": record.features
+            })
         return items
     
     def update_item_features(self, item_id: str, features: str):
-        features_bytes = features.tobytes()a
+        features_bytes = features.tobytes()
         features_base64 = base64.b64encode(features_bytes).decode('utf-8')
-        # print(item_id, features_base64)
         self.pb.collection(self.collection_name).update(item_id, {
             'features': features_base64,
         })
@@ -54,17 +73,26 @@ class FeatureUpdater:
         self.db_manager = DatabaseManager(pb_url, collection_name)
         self.feature_extractor = FeatureExtractor()
     
-    def update_features(self):
+    async def update_features(self):
         items = self.db_manager.fetch_items()
-        for item_id, image_url in items:
-            # print(item_id, image_url)
-            image_path = ImageDownloader.download_image(image_url)
-            features = self.feature_extractor.extract_features(image_path)
-            self.db_manager.update_item_features(item_id, features)
+        async with aiohttp.ClientSession() as session:
+            tasks = []
+            for item in items:
+                tasks.append(self.process_item(session, item))
+            await asyncio.gather(*tasks)
+    
+    async def process_item(self, session, item: dict):
+        image_url = item['image_url']
+        item_id = item['id']
+        image_path = await DatabaseManager.download_image(session, image_url)
+        features = self.feature_extractor.extract_features(image_path)
+        self.db_manager.update_item_features(item_id, features)
+        
 
 # Example usage
 if __name__ == "__main__":
-    PB_URL = 'http://127.0.0.1:8090'  # URL where PocketBase is running
+    PB_URL = 'http://ec2-3-128-254-179.us-east-2.compute.amazonaws.com:8090'  # URL where PocketBase is running
     COLLECTION_NAME = 'clothes'
     feature_updater = FeatureUpdater(PB_URL, COLLECTION_NAME)
-    feature_updater.update_features()
+    asyncio.run(feature_updater.update_features()) # INFO:root:Execution time: 189.2262032032013 seconds 
+    # feature_updater.update_features() # INFO:root:Execution time: 342.80014300346375 seconds

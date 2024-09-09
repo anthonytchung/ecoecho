@@ -37,7 +37,7 @@ export default function WearItApp() {
           {results && <ResultsDisplay results={results} />}
         </div>
       </main>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }
