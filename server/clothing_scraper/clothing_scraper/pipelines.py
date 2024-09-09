@@ -14,7 +14,7 @@ from pocketbase import PocketBase
 
 class ClothingScraperPipeline:
     def __init__(self):
-        self.pb = PocketBase('http://127.0.0.1:8090')
+        self.pb = PocketBase('http://ec2-3-128-254-179.us-east-2.compute.amazonaws.com:8090')
         admin_data = self.pb.admins.auth_with_password('antkjc@gmail.com', 'adminpassword')
         # print("Authentication successful:", admin_data.is_valid)
         self.collection_name = 'clothes'
@@ -36,15 +36,11 @@ class ClothingScraperPipeline:
         
 
 
-    def open_spider(self, spider):
+    # def open_spider(self, spider):
         # Open the file and initialize a list to hold the items
-        self.file = open('./scraped_data/clothes.json', 'w')
-        self.items = []
 
-    def close_spider(self, spider):
+    # def close_spider(self, spider):
         # Write the list of items as a JSON array to the file and close it
-        json.dump({"clothes": self.items}, self.file, indent=4)
-        self.file.close()
         # self.con.close()
 
     def process_item(self, item, spider):

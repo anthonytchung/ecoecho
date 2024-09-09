@@ -1,5 +1,6 @@
-
+security
 /uploads/
+scraped_data
 # /clothing_scraper/
 
 #python

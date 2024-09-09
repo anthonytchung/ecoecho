@@ -42,7 +42,7 @@ class DatabaseManager:
         return items
     
     def update_item_features(self, item_id: str, features: str):
-        features_bytes = features.tobytes()
+        features_bytes = features.tobytes()a
         features_base64 = base64.b64encode(features_bytes).decode('utf-8')
         # print(item_id, features_base64)
         self.pb.collection(self.collection_name).update(item_id, {
