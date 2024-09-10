@@ -47,7 +47,7 @@ class DatabaseManager:
             return "temp.jpg"
         
     
-    def fetch_items(self) -> list:
+    def fetch_all_items(self) -> list:
         items = []
         records = self.pb.collection(self.collection_name).get_full_list()
         for record in records:
@@ -57,11 +57,25 @@ class DatabaseManager:
                 "price": record.price,
                 "image_url": record.image_url,
                 "product_url": record.product_url,
-                "features": record.features
+                "features": record.features,
             })
         return items
     
-    def update_item_features(self, item_id: str, features: str):
+    def fetch_no_features_items(self) -> list:
+        items = []
+        records = self.pb.collection(self.collection_name).get_full_list()
+        for record in records:
+            if record.features == "":
+                items.append({
+                    "id": record.id,
+                    "title": record.title,
+                    "price": record.price,
+                    "image_url": record.image_url,
+                    "product_url": record.product_url,
+                })
+        return items
+    
+    def update_database_item(self, item_id: str, features: str):
         features_bytes = features.tobytes()
         features_base64 = base64.b64encode(features_bytes).decode('utf-8')
         self.pb.collection(self.collection_name).update(item_id, {
@@ -73,8 +87,8 @@ class FeatureUpdater:
         self.db_manager = DatabaseManager(pb_url, collection_name)
         self.feature_extractor = FeatureExtractor()
     
-    async def update_features(self):
-        items = self.db_manager.fetch_items()
+    async def update_db_features(self):
+        items = self.db_manager.fetch_no_features_items()
         async with aiohttp.ClientSession() as session:
             tasks = []
             for item in items:
@@ -86,7 +100,7 @@ class FeatureUpdater:
         item_id = item['id']
         image_path = await DatabaseManager.download_image(session, image_url)
         features = self.feature_extractor.extract_features(image_path)
-        self.db_manager.update_item_features(item_id, features)
+        self.db_manager.update_database_item(item_id, features)
         
 
 # Example usage
@@ -94,5 +108,5 @@ if __name__ == "__main__":
     PB_URL = 'http://ec2-3-128-254-179.us-east-2.compute.amazonaws.com:8090'  # URL where PocketBase is running
     COLLECTION_NAME = 'clothes'
     feature_updater = FeatureUpdater(PB_URL, COLLECTION_NAME)
-    asyncio.run(feature_updater.update_features()) # INFO:root:Execution time: 189.2262032032013 seconds 
+    asyncio.run(feature_updater.update_db_features()) # INFO:root:Execution time: 189.2262032032013 seconds 
     # feature_updater.update_features() # INFO:root:Execution time: 342.80014300346375 seconds

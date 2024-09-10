@@ -6,9 +6,9 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
-import json
-import sqlite3
+import requests
 from pocketbase import PocketBase
+from pocketbase.client import FileUpload
 
 
 
@@ -18,21 +18,6 @@ class ClothingScraperPipeline:
         admin_data = self.pb.admins.auth_with_password('antkjc@gmail.com', 'adminpassword')
         # print("Authentication successful:", admin_data.is_valid)
         self.collection_name = 'clothes'
-
-        # self.con = sqlite3.connect('./scraped_data/clothes.db')
-        # self.cur = self.con.cursor()
-        # self.cur.execute("""
-        # CREATE TABLE IF NOT EXISTS clothes(
-        #     id INTEGER PRIMARY KEY,
-        #     title TEXT,
-        #     price REAL,
-        #     original_price REAL,
-        #     image_url TEXT,
-        #     product_url TEXT,
-        #     features BLOB
-        # )
-        # """)
-        # self.con.commit()
         
 
 
@@ -46,20 +31,14 @@ class ClothingScraperPipeline:
     def process_item(self, item, spider):
         adapter = ItemAdapter(item)
         try:
-    #         # Insert item into the SQLite database
-    #         self.cur.execute("""
-    #         INSERT OR IGNORE INTO clothes (id, title, price, original_price, image_url, product_url) VALUES (?, ?, ?, ?, ?, ?)
-    #         """, (
-    #             adapter.get('id'),
-    #             adapter.get('title'),
-    #             adapter.get('price'),
-    #             adapter.get('original_price'),
-    #             adapter.get('image_url'),
-    #             adapter.get('product_url')
-    #         ))
-    #         self.con.commit()
+            # Download the image
+            image_url = adapter.get('image_url')
+            image_response = requests.get(image_url, stream=True)
 
-            # Insert item into PocketBase
+            # Save the image to a temporary file
+            with open("temp.jpg", "wb") as image_file:
+                for chunk in image_response.iter_content(1024):
+                    image_file.write(chunk)
             data = (
                 {
                     'title': adapter.get('title'),
@@ -67,14 +46,12 @@ class ClothingScraperPipeline:
                     'original_price': adapter.get('original_price'),
                     'image_url': adapter.get('image_url'),
                     'product_url': adapter.get('product_url'),
+                    # "image": FileUpload((f"{adapter.get('title')}.png", open("temp.jpg", "rb"))),
                 }
             )
             
             result = self.pb.collection(self.collection_name).create(data)
-            spider.logger.info(f"Item inserted into PocketBase: {adapter.get('title')}")
+            # spider.logger.info(f"Item inserted into PocketBase: {adapter.get('title')}")
         except Exception as e:
             spider.logger.error(f"PocketBase error: {e}")
 
-    #     # Add the item to the list for JSON output
-    #     self.items.append(adapter.asdict())
-    #     return item

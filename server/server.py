@@ -15,7 +15,7 @@ class SimilarityFinder:
         self.db_manager = DatabaseManager(pb_url, collection_name)
     
     def find_similar_items(self, uploaded_features: np.ndarray) -> list[dict[str, any]]:
-        items = self.db_manager.fetch_items()
+        items = self.db_manager.fetch_all_items()
         similarities = []
         for item in items:
             if item["features"] is not None:

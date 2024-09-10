@@ -1,17 +1,19 @@
 from pocketbase import PocketBase
 from pocketbase.client import FileUpload
 
-class Test():
-    def __init__(self):
-        self.pb = PocketBase('http://127.0.0.1:8090')
-        admin_data = self.pb.admins.auth_with_password('antkjc@gmail.com', 'adminpassword')
-        print(admin_data.is_valid)
+client = PocketBase('http://127.0.0.1:8090')
 
-        result = self.pb.collection("clothes").create(
-        {
-            "title": "Test Title",
-        })
-                             
+def main():
+    pb = PocketBase('http://127.0.0.1:8090')
+    admin_data = pb.admins.auth_with_password('antkjc@gmail.com', 'adminpassword')
+    print(admin_data.is_valid)
+
+    result = pb.create_collection("example")
+    result = pb.collection("example").create(
+    {
+        "status": "true",
+        "image": FileUpload(("image.png", open("temp.jpg", "rb"))),
+    })
 
 if __name__ == "__main__":
-    Test = Test()
+    main()
