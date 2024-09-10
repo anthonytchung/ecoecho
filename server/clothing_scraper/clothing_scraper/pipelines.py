@@ -6,18 +6,19 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
-import requests
+import requests, os
+from dotenv import load_dotenv
 from pocketbase import PocketBase
 from pocketbase.client import FileUpload
 
-
+load_dotenv()
 
 class ClothingScraperPipeline:
     def __init__(self):
-        self.pb = PocketBase('http://ec2-3-128-254-179.us-east-2.compute.amazonaws.com:8090')
-        admin_data = self.pb.admins.auth_with_password('antkjc@gmail.com', 'adminpassword')
+        self.pb = PocketBase(os.getenv('POCKETBASE_URL'))
+        admin_data = self.pb.admins.auth_with_password(os.getenv('PB_ADMIN'), os.getenv('PB_PASSWORD'))
         # print("Authentication successful:", admin_data.is_valid)
-        self.collection_name = 'clothes'
+        self.collection_name = os.getenv('PB_COLLECTION_NAME')
         
 
 
@@ -32,13 +33,13 @@ class ClothingScraperPipeline:
         adapter = ItemAdapter(item)
         try:
             # Download the image
-            image_url = adapter.get('image_url')
-            image_response = requests.get(image_url, stream=True)
+            # image_url = adapter.get('image_url')
+            # image_response = requests.get(image_url, stream=True)
 
-            # Save the image to a temporary file
-            with open("temp.jpg", "wb") as image_file:
-                for chunk in image_response.iter_content(1024):
-                    image_file.write(chunk)
+            # # Save the image to a temporary file
+            # with open("temp.jpg", "wb") as image_file:
+            #     for chunk in image_response.iter_content(1024):
+            #         image_file.write(chunk)
             data = (
                 {
                     'title': adapter.get('title'),

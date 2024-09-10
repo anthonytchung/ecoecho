@@ -1,5 +1,5 @@
-import os
-import base64
+import os, base64
+from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
@@ -8,6 +8,8 @@ from PIL import Image
 from sklearn.metrics.pairwise import cosine_similarity
 from typing import List, Dict, Any
 from databaseUpdate import FeatureExtractor, DatabaseManager
+
+load_dotenv()
 
 
 class SimilarityFinder:
@@ -74,9 +76,9 @@ class ImageSimilarityApp:
 
 
 def main():
-    UPLOAD_FOLDER = 'uploads'
-    POCKETBASE_URL = 'http://ec2-3-128-254-179.us-east-2.compute.amazonaws.com:8090'
-    COLLECTION_NAME = 'clothes'
+    UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER')
+    POCKETBASE_URL = os.getenv('POCKETBASE_URL')
+    COLLECTION_NAME = os.getenv('PB_COLLECTION_NAME')
     app = ImageSimilarityApp(UPLOAD_FOLDER, POCKETBASE_URL, COLLECTION_NAME)
     app.run()
 

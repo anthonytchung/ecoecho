@@ -2,7 +2,7 @@ import { useState, ChangeEvent, FormEvent } from 'react'
 import { ResultItem } from '../../../types'
 import axios from 'axios'
 import { Upload, Loader2 } from 'lucide-react'
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/button'
 
 interface ImageUploadProps {
   onUploadSuccess: (results: ResultItem[]) => void;
@@ -30,7 +30,7 @@ export default function ImageUpload({ onUploadSuccess }: ImageUploadProps) {
       const formData = new FormData()
       formData.append('file', selectedImage)
 
-      const response = await axios.post('https://a7d0-173-79-43-34.ngrok-free.app/api/upload', formData, {
+      const response = await axios.post('http://localhost:8080/api/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
 
