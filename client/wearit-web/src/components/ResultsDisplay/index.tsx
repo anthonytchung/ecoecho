@@ -21,6 +21,7 @@ export default function ResultsDisplay({ results }: ResultsDisplayProps) {
 
   const loadMore = () => {setDisplayCount(displayCount + 3);};
   const showLess = () => {if (displayCount > 3) {setDisplayCount(displayCount - 3);}};
+  
 
   return (
     <div className="mt-12 w-full max-w-6xl mx-auto px-4">

@@ -26,9 +26,9 @@ export default function WearItApp() {
         <h1 className="text-4xl font-bold mb-6 text-center">
           Discover Eco-Friendly Fashion Alternatives
         </h1>
-        <p className="text-xl mb-8 text-center max-w-2xl">
+        {/* <p className="text-xl mb-8 text-center max-w-2xl">
           Upload an image of your favorite fashion item, and we&apos;ll find similar, environmentally conscious options for you.
-        </p>
+        </p> */}
         <ImageUpload onUploadSuccess={handleUploadSuccess} isDarkMode={isDarkMode}/>
         {results && <ResultsDisplay results={results} />}
       </main>

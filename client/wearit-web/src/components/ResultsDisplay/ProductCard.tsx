@@ -1,10 +1,20 @@
 import Image from "next/image";
+import React from "react";
 import { formatCost } from "@/lib/utils";
 import { ResultItem } from "@/lib/types";
 import { ExternalLink, Leaf } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
-const ProductCard = ({ product }: { product: ResultItem }) => (
+const ProductCard = ({ product }: { product: ResultItem }) =>
+{
+  const [progress, setProgress] = React.useState(13)
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => setProgress(66), 500)
+    return () => clearTimeout(timer)
+  }, [])
+
+  return (
   <div
     key={product.id}
     className="group bg-gray-800 rounded-xl overflow-hidden shadow-lg transition duration-300 ease-in-out transform hover:scale-105 hover:bg-gray-700 focus-within:ring-2 focus-within:ring-green-400"
@@ -30,7 +40,7 @@ const ProductCard = ({ product }: { product: ResultItem }) => (
             {formatCost(product.price)}
           </p>
         </div>
-        <div className="mt-2">
+        <div className="">
           <div className="flex justify-between items-center mb-1">
             <span className="text-sm text-gray-400">Similarity</span>
             <span className="text-sm font-medium text-green-400">
@@ -39,9 +49,22 @@ const ProductCard = ({ product }: { product: ResultItem }) => (
           </div>
           <Progress
             value={Number((product.similarity * 100).toFixed(0))}
-            max={100}
-            className="h-2 bg-white w-[60%]"
+            className="w-full h-2 bg-gray-700"
           />
+        </div>
+        <div className="flex flex-row justify-between">
+          <p className="text-sm text-gray-400 line-clamp-1">
+            Brand
+            <span className="font-semibold text-gray-100 ml-1">
+              {/* {product.brand} H&M */}
+            </span>
+          </p>
+          <p className="text-sm text-gray-400 line-clamp-1">
+            Type
+            <span className="font-semibold text-gray-100 ml-1">
+              {/* {product.type} Women */}
+            </span>
+          </p>
         </div>
       </div>
       <p className="block p-3 text-center bg-green-600 hover:bg-green-700 transition-colors duration-300 text-white font-semibold">
@@ -50,5 +73,6 @@ const ProductCard = ({ product }: { product: ResultItem }) => (
     </a>
   </div>
 );
+}
 
 export default ProductCard;
