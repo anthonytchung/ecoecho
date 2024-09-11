@@ -1,5 +1,5 @@
 import { useState, ChangeEvent, FormEvent } from 'react'
-import { ResultItem } from '../../../types'
+import { ResultItem } from '@/lib/types'
 import axios from 'axios'
 import { Upload, Loader2, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -41,7 +41,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ isDarkMode, onUploadSuccess }
       const formData = new FormData()
       formData.append('file', selectedImage)
 
-      const response = await axios.post('http://localhost:8080/api/upload', formData, {
+      const response = await axios.post('https://d181-173-79-43-34.ngrok-free.app/api/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
 
@@ -83,7 +83,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ isDarkMode, onUploadSuccess }
       {selectedImage && (<Button 
         type="submit" 
         disabled={!selectedImage || uploading}
-        className="w-full px-6 py-3 bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-xl font-bold text-lg flex items-center justify-center hover:from-green-600 hover:to-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full px-6 py-3 bg-gradient-to-r from-green-500 to-blue-600 text-white roundedxl font-bold text-lg flex items-center justify-center hover:from-green-600 hover:to-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {uploading ? (
           <>
