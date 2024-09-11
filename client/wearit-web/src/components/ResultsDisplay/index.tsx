@@ -29,7 +29,7 @@ export default function ResultsDisplay({ results }: ResultsDisplayProps) {
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {results.slice(displayCount-3, displayCount).map((product) => (
-          <ProductCard product={product} />
+          <ProductCard key={product.id} product={product} />
         ))}
         
       </div>
