@@ -88,11 +88,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ isDarkMode, onUploadSuccess }
         {uploading ? (
           <>
             <Loader2 className="animate-spin mr-2" />
-            Finding Alternatives...
+            Finding...
           </>
         ) : (
           <>
-            Discover Eco Alternatives
+            Discover Eco Options
             <ArrowRight className="ml-2" />
           </>
         )}

@@ -56,10 +56,14 @@ class DatabaseManager:
         for record in records:
             items.append({
                 "id": record.id,
+                "brand": record.brand,
                 "title": record.title,
                 "price": record.price,
                 "image_url": record.image_url,
                 "product_url": record.product_url,
+                "type": record.type,
+                "category": record.category,
+                "available_sizes": record.available_sizes,
                 "features": record.features,
             })
         return items
@@ -71,9 +75,14 @@ class DatabaseManager:
             if record.features == "":
                 items.append({
                     "id": record.id,
+                    "brand": record.brand,
                     "title": record.title,
                     "price": record.price,
                     "image_url": record.image_url,
+                    "product_url": record.product_url,
+                    "type": record.type,
+                    "category": record.category,
+                    "available_sizes": record.available_sizes,
                     "product_url": record.product_url,
                 })
         return items

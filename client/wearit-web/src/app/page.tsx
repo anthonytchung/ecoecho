@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Header from '@/components/Header';
 import ImageUpload from '@/components/ImageUpload';
@@ -18,6 +18,11 @@ export default function WearItApp() {
     setResults(uploadedResults);
   };
 
+  useEffect(() => {
+    // Reset display count whenever the imageInputId changes
+    // setResults(null)
+  }, [results]);
+
   return (
     <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
       
@@ -32,6 +37,7 @@ export default function WearItApp() {
         <ImageUpload onUploadSuccess={handleUploadSuccess} isDarkMode={isDarkMode}/>
         {results && <ResultsDisplay results={results} />}
       </main>
+      {/* <Footer /> */}
     </div>
   );
 }

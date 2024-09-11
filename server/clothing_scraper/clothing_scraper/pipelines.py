@@ -42,11 +42,15 @@ class ClothingScraperPipeline:
             #         image_file.write(chunk)
             data = (
                 {
+                    "brand": adapter.get('brand'),
                     'title': adapter.get('title'),
                     'price': adapter.get('price'),
                     'original_price': adapter.get('original_price'),
                     'image_url': adapter.get('image_url'),
                     'product_url': adapter.get('product_url'),
+                    "type": adapter.get('type'),
+                    "category": adapter.get('category'),
+                    "available_sizes": adapter.get('available_sizes'),
                     # "image": FileUpload((f"{adapter.get('title')}.png", open("temp.jpg", "rb"))),
                 }
             )

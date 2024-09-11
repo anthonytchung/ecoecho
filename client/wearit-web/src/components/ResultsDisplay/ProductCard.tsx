@@ -56,13 +56,13 @@ const ProductCard = ({ product }: { product: ResultItem }) =>
           <p className="text-sm text-gray-400 line-clamp-1">
             Brand
             <span className="font-semibold text-gray-100 ml-1">
-              {/* {product.brand} H&M */}
+              {product.brand} H&M
             </span>
           </p>
           <p className="text-sm text-gray-400 line-clamp-1">
-            Type
+            Category
             <span className="font-semibold text-gray-100 ml-1">
-              {/* {product.type} Women */}
+              {product.category} Women
             </span>
           </p>
         </div>
