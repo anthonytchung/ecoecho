@@ -8,20 +8,29 @@ export const useDarkMode = () => {
     // Check if the user's system prefers dark mode
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     
-    // Return true if there's a saved preference for dark mode,
-    // or if the system prefers dark mode and there's no saved preference
-    return savedMode ? JSON.parse(savedMode) : prefersDark;
+    if (savedMode !== null) {
+      try {
+        // If savedMode is valid JSON, parse it
+        return JSON.parse(savedMode);
+      } catch (e) {
+        console.error('Error parsing dark mode setting from localStorage', e);
+      }
+    }
+    // Return system preference if no valid saved setting exists
+    return prefersDark;
   });
 
   useEffect(() => {
     // Save the current mode to localStorage whenever it changes
     localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
     
-    // Apply the appropriate class to the body element
-    if (isDarkMode) {
-      document.body.classList.add('dark');
-    } else {
-      document.body.classList.remove('dark');
+    // Apply or remove 'dark' class based on isDarkMode
+    const classList = document.body.classList;
+    const alreadyApplied = classList.contains('dark');
+    if (isDarkMode && !alreadyApplied) {
+      classList.add('dark');
+    } else if (!isDarkMode && alreadyApplied) {
+      classList.remove('dark');
     }
   }, [isDarkMode]);
 
