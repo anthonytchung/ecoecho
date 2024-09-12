@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["image.hm.com"], // Add the hostname here
+    domains: ["www.patagonia.com"], // Add the hostname here
   },
 };
 

@@ -45,12 +45,11 @@ class ClothingScraperPipeline:
                     "brand": adapter.get('brand'),
                     'title': adapter.get('title'),
                     'price': adapter.get('price'),
-                    'original_price': adapter.get('original_price'),
                     'image_url': adapter.get('image_url'),
                     'product_url': adapter.get('product_url'),
-                    "type": adapter.get('type'),
-                    "category": adapter.get('category'),
-                    "available_sizes": adapter.get('available_sizes'),
+                    # "type": adapter.get('type'),
+                    # "category": adapter.get('category'),
+                    # "available_sizes": adapter.get('available_sizes'),
                     # "image": FileUpload((f"{adapter.get('title')}.png", open("temp.jpg", "rb"))),
                 }
             )
@@ -59,4 +58,8 @@ class ClothingScraperPipeline:
             # spider.logger.info(f"Item inserted into PocketBase: {adapter.get('title')}")
         except Exception as e:
             spider.logger.error(f"PocketBase error: {e}")
+            spider.logger.error(f"Data sent: {data}")
+            # if hasattr(e, 'response') and e.response is not None:
+            #     spider.logger.error(f"Response body: {e.response.text}")
+            raise e
 

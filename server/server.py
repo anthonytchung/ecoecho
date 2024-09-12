@@ -18,7 +18,7 @@ class SimilarityFinder:
     
     def find_similar_items(self, uploaded_features: np.ndarray) -> list[dict[str, any]]:
         items = self.db_manager.fetch_all_items()
-        similarities = []
+        results = []
         for item in items:
             if item["features"] is not None:
                 features_bytes = base64.b64decode(item["features"])
@@ -26,18 +26,22 @@ class SimilarityFinder:
                 if db_features.shape[1] == uploaded_features.shape[1]:
                     similarity_array = cosine_similarity(uploaded_features, db_features)
                     similarity_score = float(similarity_array[0, 0])
-                    similarities.append({
+                    results.append({
                         "id": item["id"],
+                        "brand": item["brand"],
                         "title": item["title"],
                         "price": item["price"],
                         "image_url": item["image_url"],
                         "product_url": item["product_url"],
+                        "type": item["type"],
+                        "category": item["category"],
+                        "available_sizes": item["available_sizes"],
                         "similarity": similarity_score
                     })
                 else:
                     print(f"Feature dimension mismatch for item {item['id']}: DB features {db_features.shape[1]}, uploaded {uploaded_features.shape[1]}")
-        similarities.sort(key=lambda x: x['similarity'], reverse=True)
-        return similarities
+        results.sort(key=lambda x: x['similarity'], reverse=True)
+        return results
 
 
 class ImageSimilarityApp:
