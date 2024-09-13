@@ -47,8 +47,8 @@ class ClothingScraperPipeline:
                     'price': adapter.get('price'),
                     'image_url': adapter.get('image_url'),
                     'product_url': adapter.get('product_url'),
-                    # "type": adapter.get('type'),
-                    # "category": adapter.get('category'),
+                    "type": adapter.get('type'),
+                    "category": adapter.get('category'),
                     # "available_sizes": adapter.get('available_sizes'),
                     # "image": FileUpload((f"{adapter.get('title')}.png", open("temp.jpg", "rb"))),
                 }
