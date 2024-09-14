@@ -61,10 +61,10 @@ class PatagoniaSpider(scrapy.Spider):
                 # Each entry in image_urls now looks like "url sizeW", so split by space and get the first part
                 highest_resolution_image = image_urls[-1].strip().split()[0]  # Selecting the last URL, usually the highest resolution
                 item['image_url'] = highest_resolution_image
-            if response.url == "https://www.patagonia.com/shop/mens":
-                item['category'] = "Mens"
-            else:
+            if response.url.find("womens") != -1:
                 item['category'] = "Womens"
+            else:
+                item['category'] = "Mens"
             item['product_url'] = response.urljoin(product.css('a').attrib['href'])
             
             yield item

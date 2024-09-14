@@ -34,7 +34,7 @@ class KotnSpider(scrapy.Spider):
             item['brand'] = 'KOTN'
             item['title'] = product.css('h2.ProductCard_title__BY8Xw::text').get().strip()
             item['price'] = product.css('p.ProductCard_text__zdpS_::text').get().replace('$', '').strip()
-            original_image_url = product.css('img.ProductCard_image__exZ38::attr(src)').get()
+            item['image_url'] = product.css('img.ProductCard_image__exZ38::attr(src)').get()
             # https://cdn.shopify.com/s/files/1/0932/1356/files/Women_sMariamTank_BlueLotus2_100x.jpg?v=1725383617
             # https://cdn.shopify.com/s/files/1/0932/1356/files/WOMEN_S-MARIAM-TANK_BLUE-LOTUS_640x.progressive.jpg?v=1724805817
 
@@ -46,7 +46,12 @@ class KotnSpider(scrapy.Spider):
 
             # https://cdn.shopify.com/s/files/1/0932/1356/files/Men_sMemphisDenimShirt_MidnightWash2_100x.jpg?v=1725372317
             # https://cdn.shopify.com/s/files/1/0932/1356/files/MEN_S-MEMPHIS-DENIM-SHIRT_MIDNIGHT-WASH_3840x.progressive.jpg?v=1725372288
-            item['image_url'] = transform_url(original_image_url)
+            # item['image_url'] = transform_url(original_image_url)
+
+            if response.url.find("womens") != -1:
+                item['category'] = "Womens"
+            else:
+                item['category'] = "Mens"
             item['product_url'] = response.urljoin(product.css('a').attrib['href'])
             
             yield item

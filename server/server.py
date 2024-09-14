@@ -4,12 +4,9 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import numpy as np
-from PIL import Image
 from sklearn.metrics.pairwise import cosine_similarity
-from typing import List, Dict, Any
 from databaseUpdate import FeatureExtractor, DatabaseManager
 
-load_dotenv()
 
 
 class SimilarityFinder:
@@ -75,11 +72,17 @@ class ImageSimilarityApp:
                 results = self.similarity_finder.find_similar_items(uploaded_features)
 
                 return jsonify({'similarMatches': results})
+            
+        @self.app.route("/api/test", methods=['GET'])
+        def test():
+            return jsonify({'message': 'Hello World!'})
     def run(self, debug: bool = True, port: int = 8080):
         self.app.run(debug=debug, port=port)
 
 
 def main():
+    load_dotenv()
+    print("Starting Image Similarity App")
     UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER')
     POCKETBASE_URL = os.getenv('POCKETBASE_URL')
     COLLECTION_NAME = os.getenv('PB_COLLECTION_NAME')

@@ -41,7 +41,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ isDarkMode, onUploadSuccess }
       const formData = new FormData()
       formData.append('file', selectedImage)
 
-      const response = await axios.post('https://d181-173-79-43-34.ngrok-free.app/api/upload', formData, {
+      const response = await axios.post('http://127.0.0.1:8080/api/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
 

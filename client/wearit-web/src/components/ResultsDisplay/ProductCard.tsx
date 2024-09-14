@@ -33,7 +33,7 @@ const ProductCard = ({ product }: { product: ResultItem }) => {
                 <Leaf className="w-4 h-4 text-white" />
               </div> */}
         </div>
-        <div className="p-4 flex flex-col justify-between h-52">
+        <div className="p-4 flex flex-col justify-between h-56">
           <div>
             <h3 className="font-bold text-xl mb-2 text-gray-100 group-hover:text-green-400 transition-colors duration-300 line-clamp-2 h-14 overflow-hidden">
               {product.title}
@@ -57,7 +57,7 @@ const ProductCard = ({ product }: { product: ResultItem }) => {
           <div className="flex flex-row justify-between">
             <p className="text-sm text-gray-400 line-clamp-1">
               Brand
-              <span className=" font-semibold text-gray-100 ml-1">
+              <span className="font-semibold text-gray-100 ml-1">
                 {product.brand}
               </span>
             </p>
@@ -65,6 +65,14 @@ const ProductCard = ({ product }: { product: ResultItem }) => {
               Category
               <span className="font-semibold text-gray-100 ml-1">
                 {product.category}
+              </span>
+            </p>
+          </div>
+          <div className="flex flex-row justify-between mt-2">
+            <p className="text-sm text-gray-400 line-clamp-1">
+              Type
+              <span className="font-semibold text-gray-100 ml-1">
+                {product.type}
               </span>
             </p>
           </div>
