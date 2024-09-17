@@ -1,9 +1,8 @@
 import numpy as np
-import requests
+from dotenv import load_dotenv
 import base64, os
 import asyncio, aiohttp
 import time, logging
-from dotenv import load_dotenv
 from PIL import Image
 from io import BytesIO
 from tensorflow.keras.preprocessing.image import img_to_array
@@ -11,7 +10,7 @@ from tensorflow.keras.applications.vgg16 import preprocess_input, VGG16
 from rembg import remove
 from pocketbase import PocketBase
 
-load_dotenv()
+
 
 class FeatureExtractor:
     def __init__(self):
@@ -117,6 +116,7 @@ class FeatureUpdater:
 
 # Example usage
 if __name__ == "__main__":
+    load_dotenv()
     PB_URL = os.getenv('POCKETBASE_URL')  # URL where PocketBase is running
     COLLECTION_NAME = os.getenv('PB_COLLECTION_NAME')  # Name of the collection in PocketBase
     feature_updater = FeatureUpdater(PB_URL, COLLECTION_NAME)

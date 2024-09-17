@@ -73,7 +73,7 @@ class ImageSimilarityApp:
 
                 return jsonify({'similarMatches': results})
             
-        @self.app.route("/api/test", methods=['GET'])
+        @self.app.route("/apisstest", methods=['GET'])
         def test():
             return jsonify({'message': 'Hello World!'})
     def run(self, debug: bool = True, port: int = 8080):
@@ -82,7 +82,6 @@ class ImageSimilarityApp:
 
 def main():
     load_dotenv()
-    print("Starting Image Similarity App")
     UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER')
     POCKETBASE_URL = os.getenv('POCKETBASE_URL')
     COLLECTION_NAME = os.getenv('PB_COLLECTION_NAME')

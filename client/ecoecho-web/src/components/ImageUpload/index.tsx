@@ -42,12 +42,12 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ isDarkMode, onUploadSuccess }
       formData.append('file', selectedImage)
 
       const response = await axios.post('http://127.0.0.1:8080/api/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: { 'content-type': 'image' },
       })
 
       onUploadSuccess(response.data.similarMatches)
     } catch (error: any) {
-      console.error('Upload error:', error.response?.data || error.message)
+      console.error('upload error:', error.response?.data || error.message)
     } finally {
       setUploading(false)
     }

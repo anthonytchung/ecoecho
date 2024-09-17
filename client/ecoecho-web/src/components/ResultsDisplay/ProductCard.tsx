@@ -11,7 +11,7 @@ const ProductCard = ({ product }: { product: ResultItem }) => {
   return (
     <div
       key={product.id}
-      className="group bg-gray-800 rounded-xl overflow-hidden shadow-lg transition duration-300 ease-in-out transform hover:scale-105 hover:bg-gray-700 focus-within:ring-2 focus-within:ring-green-400 {styles.productCard}"
+      className="group bg-pinkish-300 rounded-xl overflow-hidden shadow-lg transition duration-300 ease-in-out transform hover:scale-105 hover:bg-gray-700 focus-within:ring-2 focus-within:ring-green-400 {styles.productCard}"
     >
       <a href={product.product_url} target="_blank" rel="noopener noreferrer">
         <div className="relative aspect-w-16 aspect-h-9">
@@ -35,7 +35,7 @@ const ProductCard = ({ product }: { product: ResultItem }) => {
         </div>
         <div className="p-4 flex flex-col justify-between h-56">
           <div>
-            <h3 className="font-bold text-xl mb-2 text-gray-100 group-hover:text-green-400 transition-colors duration-300 line-clamp-2 h-14 overflow-hidden">
+            <h3 className="font-bold text-xl mb-1 text-gray-100 group-hover:text-green-400 transition-colors duration-300 line-clamp-2 h-14 overflow-hidden">
               {product.title}
             </h3>
             <p className="text-lg font-semibold text-gray-300">
@@ -51,7 +51,7 @@ const ProductCard = ({ product }: { product: ResultItem }) => {
             </div>
             <Progress
               value={Number((product.similarity * 100).toFixed(0))}
-              className="w-full h-2 bg-gray-700"
+              className="w-full h-2  mb-2 bg-gray-700"
             />
           </div>
           <div className="flex flex-row justify-between">
@@ -68,7 +68,7 @@ const ProductCard = ({ product }: { product: ResultItem }) => {
               </span>
             </p>
           </div>
-          <div className="flex flex-row justify-between mt-2">
+          <div className="flex flex-row justify-between">
             <p className="text-sm text-gray-400 line-clamp-1">
               Type
               <span className="font-semibold text-gray-100 ml-1">
@@ -77,7 +77,7 @@ const ProductCard = ({ product }: { product: ResultItem }) => {
             </p>
           </div>
         </div>
-        <p className="block p-3 text-center bg-green-600 hover:bg-green-700 transition-colors duration-300 text-white font-semibold">
+        <p className="block p-3 text-center bg-eco-600 hover:bg-eco-700 transition-colors duration-300 text-white font-semibold">
           View Product <ExternalLink className="inline-block w-4 h-4 ml-2" />
         </p>
       </a>
